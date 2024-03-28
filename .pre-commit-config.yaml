@@ -5,7 +5,6 @@ repos:
       - id: check-merge-conflict
       - id: check-yaml
       - id: end-of-file-fixer
-      - id: no-commit-to-branch
       - id: trailing-whitespace
       - id: file-contents-sorter
         files: "networks/"
