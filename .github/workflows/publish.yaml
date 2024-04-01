@@ -1,0 +1,26 @@
+name: Publish network lists
+on:
+  push:
+    branches: [main]
+jobs:
+  publishing:
+    runs-on: minafoundation-default-runners
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@v4.1.1
+      - name: ⚙️ Set environment variables
+        run: |
+          echo "AWS_REGION=$AWS_REGION" >> $GITHUB_ENV
+          echo "DEPLOYMENT_ROLE_NAME=$DEPLOYMENT_ROLE_NAME" >> $GITHUB_ENV
+          echo "AWS_ROLE_DURATION_SECONDS=$AWS_ROLE_DURATION_SECONDS" >> $GITHUB_ENV
+      - name: 🔑 Assume role
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-region: ${{ env.AWS_REGION }}
+          role-to-assume: ${{ env.DEPLOYMENT_ROLE_NAME }}
+          role-session-name: ${{ env.DEPLOYMENT_ROLE_NAME }}
+          role-duration-seconds: ${{ env.AWS_ROLE_DURATION_SECONDS }}
+      - name: 📰 Publish network lists
+        env:
+          MF_SEED_LISTS_BUCKET_NAME: ${{ secrets.MF_SEED_LISTS_BUCKET_NAME }}
+        run: ./scripts/publish.sh "$MF_SEED_LISTS_BUCKET_NAME"
