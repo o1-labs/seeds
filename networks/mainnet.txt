@@ -7,4 +7,4 @@
 /dns4/seed-2.mainnet.o1test.net/tcp/10001/p2p/12D3KooWK4NfthViCTyLgVQa1WvqDC1NccVxGruCXCZUt3GqvFvn
 /dns4/seed-3.mainnet.o1test.net/tcp/10002/p2p/12D3KooWNofeYVAJXA3WGg2qCDhs3GEe71kTmKpFQXRbZmCz1Vr7
 /dns4/seed.minaexplorer.com/tcp/8302/p2p/12D3KooWR7coZtrMHvsgsfiWq2GESYypac3i29LFGp6EpbtjxBiJ
-/ip4/51.178.128.35/tcp/5002/p2p/12D3KooWLMHuJrir6q42qUiihZmqJshzWZ6baYNP6zs3UtJt67BF
+/dns4/mina-mainnet-seed.obscura.network/tcp/5002/p2p/12D3KooWLMHuJrir6q42qUiihZmqJshzWZ6baYNP6zs3UtJt67BF
