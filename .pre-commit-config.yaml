@@ -6,7 +6,6 @@ repos:
       - id: check-yaml
       - id: end-of-file-fixer
       - id: trailing-whitespace
-      - id: file-contents-sorter
         files: "networks/"
   - repo: https://github.com/shellcheck-py/shellcheck-py
     rev: v0.10.0.1
