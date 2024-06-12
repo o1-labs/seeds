@@ -1,0 +1,52 @@
+name: Daily Seed Synchronization Check
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 0 * * 1,4" # At 00:00 on Monday, and Thursday
+concurrency:
+  group: "${{ github.workflow }} @ ${{ github.event.pull_request.head.label || github.head_ref || github.ref }}"
+  cancel-in-progress: true
+jobs:
+  parse-mainnet-seed-list:
+    runs-on: minafoundation-default-runners
+    outputs:
+      seeds: ${{ steps.parse-mainnet-seed-list.outputs.seeds }}
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@v4.1.1
+      - name: Parse Mainnet Seed List
+        id: parse-mainnet-seed-list
+        run: |
+          echo "Parsing Mainnet Seed List"
+          seeds=$(cat networks/mainnet.txt | jq -R -s -c 'split("\n") | map(select(. != ""))')
+          echo "seeds=$seeds" >> $GITHUB_OUTPUT
+  test-peer:
+    needs: parse-mainnet-seed-list
+    runs-on: minafoundation-xlarge-runners
+    if: needs.parse-mainnet-seed-list.outputs.seeds != '[]' && needs.parse-mainnet-seed-list.outputs.seeds != ''
+    continue-on-error: true
+    strategy:
+      matrix:
+        seed: ${{ fromJson(needs.parse-mainnet-seed-list.outputs.seeds) }}
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@v4.1.1
+      - name: Start Mina Daemon
+        run: |
+          docker run -d --restart always --name mina \
+                --entrypoint="" \
+                minaprotocol/mina-daemon:3.0.0-93e0279-bullseye-mainnet \
+                mina daemon \
+                --peer ${{ matrix.seed }}
+      - name: Wait for Daemon to Sync
+        id: wait-for-sync
+        run: ./scripts/mina-sync-monitor.sh
+      - name: Post to a Slack channel
+        id: slack
+        if: ${{ failure() }}
+        uses: slackapi/slack-github-action@v1.26.0
+        with:
+          channel-id: "mf-alerts-info"
+          slack-message: "Failed to synchronize with Mina Daemon using seed peer:\n *_${{ matrix.seed }}_*"
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
