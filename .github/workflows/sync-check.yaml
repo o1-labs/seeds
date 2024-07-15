@@ -22,9 +22,11 @@ jobs:
           echo "seeds=$seeds" >> $GITHUB_OUTPUT
   test-peer:
     needs: parse-mainnet-seed-list
-    runs-on: minafoundation-xlarge-runners
+    runs-on: minafoundation-default-runners # change to minafoundation-xlarge-runners
     if: needs.parse-mainnet-seed-list.outputs.seeds != '[]' && needs.parse-mainnet-seed-list.outputs.seeds != ''
     continue-on-error: true
+    outputs:
+      failing-seeds: ${{ steps.parse-mainnet-seed-list.outputs.seeds }}
     strategy:
       matrix:
         seed: ${{ fromJson(needs.parse-mainnet-seed-list.outputs.seeds) }}
@@ -33,20 +35,52 @@ jobs:
         uses: actions/checkout@v4.1.1
       - name: Start Mina Daemon
         run: |
-          docker run -d --restart always --name mina \
-                --entrypoint="" \
-                minaprotocol/mina-daemon:3.0.0-93e0279-bullseye-mainnet \
-                mina daemon \
-                --peer ${{ matrix.seed }}
+          echo "Starting Mina Daemon"
+          # docker run -d --restart always --name mina \
+          #       --entrypoint="" \
+          #       minaprotocol/mina-daemon:3.0.0-93e0279-bullseye-mainnet \
+          #       mina daemon \
+          #       --peer ${{ matrix.seed }}
       - name: Wait for Daemon to Sync
         id: wait-for-sync
-        run: ./scripts/mina-sync-monitor.sh
+        run: exit 1 && ./scripts/mina-sync-monitor.sh
+      - name: Record Failing Seed
+        id: record-fail
+        if: ${{ failure() }}
+        run: |
+          echo "Update Failed Seed List"
+          echo "${{ matrix.seed }}" > failed-seeds-${{strategy.job-index}}.txt
+      - name: Upload failed seeds
+        if: ${{ failure() }}
+        uses: actions/upload-artifact@v4.4.0
+        with:
+          name: failed-seeds-${{strategy.job-index}}
+          path: failed-seeds-${{strategy.job-index}}.txt
+          retention-days: 1
+
+  print-failed-seeds:
+    needs: test-peer
+    runs-on: minafoundation-default-runners
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          pattern: 'failed-seeds-*'  # Use a wildcard to download all artifacts matching the pattern
+      - name: Echo Failed Seeds
+        run: |
+          cat failed-seeds-*/failed-seeds-*.txt > failed-seeds.txt
+          if [ ! -s failed-seeds.txt ]; then
+            exit 0
+          else
+            jq -n --arg message "Failed to synchronize with Mina Daemon using seed peer:" \
+              --argjson seeds "$(cat failed-seeds.txt | jq -R . | jq -s .)" \
+              '{text: ($message + "\n\n" + ($seeds | map("• " + .) | join("\n")))}' > payload-slack-content.json
+          fi
       - name: Post to a Slack channel
         id: slack
-        if: ${{ failure() }}
         uses: slackapi/slack-github-action@v1.26.0
         with:
-          channel-id: "mf-alerts-info"
-          slack-message: "Failed to synchronize with Mina Daemon using seed peer:\n *_${{ matrix.seed }}_*"
+          channel-id: "test-slack-api"
+          payload-file-path: "./payload-slack-content.json"
         env:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
