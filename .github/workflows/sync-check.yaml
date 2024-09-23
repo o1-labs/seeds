@@ -22,11 +22,9 @@ jobs:
           echo "seeds=$seeds" >> $GITHUB_OUTPUT
   test-peer:
     needs: parse-mainnet-seed-list
-    runs-on: minafoundation-default-runners # change to minafoundation-xlarge-runners
+    runs-on: minafoundation-xlarge-runners
     if: needs.parse-mainnet-seed-list.outputs.seeds != '[]' && needs.parse-mainnet-seed-list.outputs.seeds != ''
     continue-on-error: true
-    outputs:
-      failing-seeds: ${{ steps.parse-mainnet-seed-list.outputs.seeds }}
     strategy:
       matrix:
         seed: ${{ fromJson(needs.parse-mainnet-seed-list.outputs.seeds) }}
@@ -36,14 +34,14 @@ jobs:
       - name: Start Mina Daemon
         run: |
           echo "Starting Mina Daemon"
-          # docker run -d --restart always --name mina \
-          #       --entrypoint="" \
-          #       minaprotocol/mina-daemon:3.0.0-93e0279-bullseye-mainnet \
-          #       mina daemon \
-          #       --peer ${{ matrix.seed }}
+          docker run -d --restart always --name mina \
+                --entrypoint="" \
+                minaprotocol/mina-daemon:3.0.0-93e0279-bullseye-mainnet \
+                mina daemon \
+                --peer ${{ matrix.seed }}
       - name: Wait for Daemon to Sync
         id: wait-for-sync
-        run: exit 1 && ./scripts/mina-sync-monitor.sh
+        run: ./scripts/mina-sync-monitor.sh
       - name: Record Failing Seed
         id: record-fail
         if: ${{ failure() }}
@@ -65,7 +63,7 @@ jobs:
       - name: Download all artifacts
         uses: actions/download-artifact@v4
         with:
-          pattern: 'failed-seeds-*'  # Use a wildcard to download all artifacts matching the pattern
+          pattern: "failed-seeds-*" # Use a wildcard to download all artifacts matching the pattern
       - name: Echo Failed Seeds
         run: |
           cat failed-seeds-*/failed-seeds-*.txt > failed-seeds.txt
@@ -80,7 +78,7 @@ jobs:
         id: slack
         uses: slackapi/slack-github-action@v1.26.0
         with:
-          channel-id: "test-slack-api"
+          channel-id: "mf-alerts-info"
           payload-file-path: "./payload-slack-content.json"
         env:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}

@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 set -e
-max_attempts=24
+max_attempts=40
 attempt=0
-sleep_duration=300
+sleep_duration=500
 status="Null"
 
 check_sync_status() {
