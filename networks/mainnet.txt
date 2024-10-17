@@ -1,5 +1,4 @@
 /dns4/mina-seed.etonec.com/tcp/8302/p2p/12D3KooWKQ1YVtqZFzxDmSw8RASCPZpDCQBywnFz76RbrvZCXk5T
-/dns4/mina-mainnet-seed.obscura.network/tcp/5002/p2p/12D3KooWFRpU3giZDFjJjwoHSY8kdpv8ktvferGkyQRUHozsXw4X
 /dns4/mina-mainnet-seed.staketab.com/tcp/10003/p2p/12D3KooWSDTiXcdBVpN12ZqXJ49qCFp8zB1NnovuhZu6A28GLF1J
 /dns4/mina-seed-1.zkvalidator.com/tcp/8302/p2p/12D3KooWSfEfnVCqzpMbmyUmRY3ESEVmJaRcd1EkLbnvvERQxwtu
 /dns4/mina-seed.bitcat365.com/tcp/10001/p2p/12D3KooWQzozNTDKL7MqUh6Nh11GMA4pQhRCAsNTRWxCAzAi4VbE
