@@ -66,14 +66,10 @@ jobs:
           pattern: "failed-seeds-*" # Use a wildcard to download all artifacts matching the pattern
       - name: Echo Failed Seeds
         run: |
-          cat failed-seeds-*/failed-seeds-*.txt > failed-seeds.txt
-          if [ ! -s failed-seeds.txt ]; then
-            exit 0
-          else
-            jq -n --arg message "Failed to synchronize with Mina Daemon using seed peer:" \
-              --argjson seeds "$(cat failed-seeds.txt | jq -R . | jq -s .)" \
-              '{text: ($message + "\n\n" + ($seeds | map("• " + .) | join("\n")))}' > payload-slack-content.json
-          fi
+          cat failed-seeds-*/failed-seeds-*.txt > failed-seeds.txt || exit 0
+          jq -n --arg message "Failed to synchronize with Mina Daemon using seed peer:" \
+            --argjson seeds "$(cat failed-seeds.txt | jq -R . | jq -s .)" \
+            '{text: ($message + "\n\n" + ($seeds | map("• " + .) | join("\n")))}' > payload-slack-content.json
       - name: Post to a Slack channel
         id: slack
         uses: slackapi/slack-github-action@v1.26.0
