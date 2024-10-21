@@ -8,7 +8,7 @@ concurrency:
   cancel-in-progress: true
 jobs:
   parse-mainnet-seed-list:
-    runs-on: minafoundation-default-runners
+    runs-on: minafoundation-default-interruptible-runners
     outputs:
       seeds: ${{ steps.parse-mainnet-seed-list.outputs.seeds }}
     steps:
@@ -22,7 +22,7 @@ jobs:
           echo "seeds=$seeds" >> $GITHUB_OUTPUT
   test-peer:
     needs: parse-mainnet-seed-list
-    runs-on: minafoundation-xlarge-runners
+    runs-on: minafoundation-xlarge-interruptible-runners
     if: needs.parse-mainnet-seed-list.outputs.seeds != '[]' && needs.parse-mainnet-seed-list.outputs.seeds != ''
     continue-on-error: true
     strategy:
@@ -58,7 +58,7 @@ jobs:
 
   print-failed-seeds:
     needs: test-peer
-    runs-on: minafoundation-default-runners
+    runs-on: minafoundation-default-interruptible-runners
     steps:
       - name: Download all artifacts
         uses: actions/download-artifact@v4
