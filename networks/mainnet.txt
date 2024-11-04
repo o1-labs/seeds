@@ -3,10 +3,10 @@
 /dns4/mina-seed-1.zkvalidator.com/tcp/8302/p2p/12D3KooWSfEfnVCqzpMbmyUmRY3ESEVmJaRcd1EkLbnvvERQxwtu
 /dns4/mina-seed.bitcat365.com/tcp/10001/p2p/12D3KooWQzozNTDKL7MqUh6Nh11GMA4pQhRCAsNTRWxCAzAi4VbE
 /dns4/production-mainnet-libp2p.minaprotocol.network/tcp/10000/p2p/12D3KooWPywsM191KGGNVGiNqN35nyyJg4W2BhhYukF6hP9YBR8q
-/dns4/production-mainnet-libp2p.minaprotocol.network/tcp/10010/p2p/12D3KooWGB6mJ9Ub9qRBDgHhedNXH4FawWjGQGGN2tQKaKa3gK2h
-/dns4/production-mainnet-libp2p.minaprotocol.network/tcp/10020/p2p/12D3KooWMvsPx6A1XNa4V8bTbNb6Fh7WHWf92Ezgfxt6UWxiNq5n
-/dns4/production-mainnet-libp2p.minaprotocol.network/tcp/10030/p2p/12D3KooW9wL9iaj7qbCTBFspi4gCwdZFCdNRnwkRrdRfe4GBJ978
-/dns4/production-mainnet-libp2p.minaprotocol.network/tcp/10040/p2p/12D3KooWL8SFDx6PSzpSLgBtRSK1brjKFqs8EvW2yX9zexQEefAo
+/dns4/primary-tcp-proxy.hz.minaprotocol.network/tcp/10010/p2p/12D3KooWGB6mJ9Ub9qRBDgHhedNXH4FawWjGQGGN2tQKaKa3gK2h
+/dns4/primary-tcp-proxy.hz.minaprotocol.network/tcp/10020/p2p/12D3KooWMvsPx6A1XNa4V8bTbNb6Fh7WHWf92Ezgfxt6UWxiNq5n
+/dns4/primary-tcp-proxy.hz.minaprotocol.network/tcp/10030/p2p/12D3KooW9wL9iaj7qbCTBFspi4gCwdZFCdNRnwkRrdRfe4GBJ978
+/dns4/primary-tcp-proxy.hz.minaprotocol.network/tcp/10040/p2p/12D3KooWL8SFDx6PSzpSLgBtRSK1brjKFqs8EvW2yX9zexQEefAo
 /dns4/seed-1.mainnet.gcp.o1test.net/tcp/10003/p2p/12D3KooWCa1d7G3SkRxy846qTvdAFX69NnoYZ32orWVLqJcDVGHW
 /dns4/seed-2.mainnet.gcp.o1test.net/tcp/10003/p2p/12D3KooWK4NfthViCTyLgVQa1WvqDC1NccVxGruCXCZUt3GqvFvn
 /dns4/seed-4.mainnet.gcp.o1test.net/tcp/10003/p2p/12D3KooWEdBiTUQqxp3jeuWaZkwiSNcFxC6d6Tdq7u2Lf2ZD2Q6X
