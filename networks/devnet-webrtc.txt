@@ -1,7 +1,7 @@
 /2bjYBqn45MmtismsAYP9rZ6Xns9snCcNsN1eDgQZB5s6AzY2CR2/https/webrtc3.webnode.openmina.com/443
-/2bCmMin1FEwdRhkCYUr5VV7T5g5HxiXqwQupKiKJ1Si2s56afFK/https/seed-us-west-2.devnet.openmina.com/443
-/2cAmEo9GEqASVTjiv9vrHfZEYDeax6BGcH6d7FxQojSK9oKbXpG/https/seed-eu-west-3.devnet.openmina.com/443
-/2bsLvPehqeDfZ4RuRsBYBeMSywZ8NbiJDReZJZDLky4oDEyowm4/https/seed-ap-south-1.devnet.openmina.com/443
-/2bUNpQvjFA6hGHJ4ztbgk9o5ueUY8NPScZpoHqxepuaT1TR9t4c/https/seed-ap-northeast-1.devnet.openmina.com/443
-/2c8PwosPebiRtXKWE4QfKZBTe3vwjoDLsNh8oAtdAHMLAavTML5/https/seed-ap-southeast-2.devnet.openmina.com/443
-/2aT9BcAzt7AzFShEe1rb7ARW5S36gi6CZqKgxH15ggC2NwZN2A5/https/seed-sa-east-1.devnet.openmina.com/443
+/2bCmMin1FEwdRhkCYUr5VV7T5g5HxiXqwQupKiKJ1Si2s56afFK/https/seed-us-west-2.devnet.openmina.com/3000
+/2cAmEo9GEqASVTjiv9vrHfZEYDeax6BGcH6d7FxQojSK9oKbXpG/https/seed-eu-west-3.devnet.openmina.com/3000
+/2bsLvPehqeDfZ4RuRsBYBeMSywZ8NbiJDReZJZDLky4oDEyowm4/https/seed-ap-south-1.devnet.openmina.com/3000
+/2bUNpQvjFA6hGHJ4ztbgk9o5ueUY8NPScZpoHqxepuaT1TR9t4c/https/seed-ap-northeast-1.devnet.openmina.com/3000
+/2c8PwosPebiRtXKWE4QfKZBTe3vwjoDLsNh8oAtdAHMLAavTML5/https/seed-ap-southeast-2.devnet.openmina.com/3000
+/2aT9BcAzt7AzFShEe1rb7ARW5S36gi6CZqKgxH15ggC2NwZN2A5/https/seed-sa-east-1.devnet.openmina.com/3000
