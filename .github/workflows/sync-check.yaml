@@ -59,6 +59,7 @@ jobs:
   print-failed-seeds:
     needs: test-peer
     runs-on: minafoundation-default-interruptible-runners
+    continue-on-error: true
     steps:
       - name: Download all artifacts
         uses: actions/download-artifact@v4
@@ -72,6 +73,7 @@ jobs:
             '{text: ($message + "\n\n" + ($seeds | map("• " + .) | join("\n")))}' > payload-slack-content.json
       - name: Post to a Slack channel
         id: slack
+        if: ${{ success() }}
         uses: slackapi/slack-github-action@v1.26.0
         with:
           channel-id: "mf-alerts-info"
