@@ -1,4 +1,4 @@
-name: Daily Seed Synchronization Check
+name: oCaml Seed Synchronization Check
 on:
   workflow_dispatch:
   schedule:
@@ -18,7 +18,7 @@ jobs:
         id: parse-mainnet-seed-list
         run: |
           echo "Parsing Mainnet Seed List"
-          seeds=$(cat networks/mainnet.txt | jq -R -s -c 'split("\n") | map(select(. != ""))')
+          seeds=$(cat networks/devnet-webrtc.txt | jq -R -s -c 'split("\n") | map(select(. != ""))')
           echo "seeds=$seeds" >> $GITHUB_OUTPUT
   test-peer:
     needs: parse-mainnet-seed-list
@@ -36,12 +36,14 @@ jobs:
           echo "Starting Mina Daemon"
           docker run -d --restart always --name mina \
                 --entrypoint="" \
-                minaprotocol/mina-daemon:3.0.0-93e0279-bullseye-mainnet \
+                minaprotocol/mina-daemon:${{ env.MINA_TAG }} \
                 mina daemon \
                 --peer ${{ matrix.seed }}
+        env:
+          MINA_TAG: 3.0.3-d800da8-focal-mainnet
       - name: Wait for Daemon to Sync
         id: wait-for-sync
-        run: ./scripts/mina-sync-monitor.sh
+        run: ./scripts/mina-sync-monitor.sh ocaml
       - name: Record Failing Seed
         id: record-fail
         if: ${{ failure() }}
@@ -76,7 +78,7 @@ jobs:
         if: ${{ success() }}
         uses: slackapi/slack-github-action@v1.26.0
         with:
-          channel-id: "mf-alerts-info"
+          channel-id: "mf-alerts-test"
           payload-file-path: "./payload-slack-content.json"
         env:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}

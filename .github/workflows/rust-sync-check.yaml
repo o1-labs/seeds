@@ -1,0 +1,83 @@
+name: Rust Seed Synchronization Check
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 */3 * * *" # Every 3 Hours
+concurrency:
+  group: "${{ github.workflow }} @ ${{ github.event.pull_request.head.label || github.head_ref || github.ref }}"
+  cancel-in-progress: true
+jobs:
+  parse-mainnet-seed-list:
+    runs-on: minafoundation-default-interruptible-runners
+    outputs:
+      seeds: ${{ steps.parse-mainnet-seed-list.outputs.seeds }}
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@v4.1.1
+      - name: Parse Mainnet Seed List
+        id: parse-mainnet-seed-list
+        run: |
+          echo "Parsing Mainnet Seed List"
+          seeds=$(cat networks/devnet-webrtc.txt | jq -R -s -c 'split("\n") | map(select(. != ""))')
+          echo "seeds=$seeds" >> $GITHUB_OUTPUT
+  test-peer:
+    needs: parse-mainnet-seed-list
+    runs-on: minafoundation-default-interruptible-runners
+    if: needs.parse-mainnet-seed-list.outputs.seeds != '[]' && needs.parse-mainnet-seed-list.outputs.seeds != ''
+    continue-on-error: true
+    strategy:
+      matrix:
+        seed: ${{ fromJson(needs.parse-mainnet-seed-list.outputs.seeds) }}
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@v4.1.1
+      - name: Start Mina Daemon
+        run: |
+          echo "Starting Mina Daemon"
+          docker run --rm -d --name openmina \
+                openmina/openmina:${{ env.MINA_TAG }} \
+                node \
+                --peers ${{ matrix.seed }}
+        env:
+          MINA_TAG: v0.11.4
+      - name: Wait for Daemon to Sync
+        id: wait-for-sync
+        run: ./scripts/mina-sync-monitor.sh rust
+      - name: Record Failing Seed
+        id: record-fail
+        if: ${{ failure() }}
+        run: |
+          echo "Update Failed Seed List"
+          echo "${{ matrix.seed }}" > failed-seeds-${{strategy.job-index}}.txt
+      - name: Upload failed seeds
+        if: ${{ failure() }}
+        uses: actions/upload-artifact@v4.4.0
+        with:
+          name: failed-seeds-${{strategy.job-index}}
+          path: failed-seeds-${{strategy.job-index}}.txt
+          retention-days: 1
+
+  print-failed-seeds:
+    needs: test-peer
+    runs-on: minafoundation-default-interruptible-runners
+    continue-on-error: true
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          pattern: "failed-seeds-*" # Use a wildcard to download all artifacts matching the pattern
+      - name: Echo Failed Seeds
+        run: |
+          cat failed-seeds-*/failed-seeds-*.txt > failed-seeds.txt || exit 0
+          jq -n --arg message "Failed to synchronize with Mina Daemon using seed peer:" \
+            --argjson seeds "$(cat failed-seeds.txt | jq -R . | jq -s .)" \
+            '{text: ($message + "\n\n" + ($seeds | map("• " + .) | join("\n")))}' > payload-slack-content.json
+      - name: Post to a Slack channel
+        id: slack
+        if: ${{ success() }}
+        uses: slackapi/slack-github-action@v1.26.0
+        with:
+          channel-id: "mf-alerts-testing"
+          payload-file-path: "./payload-slack-content.json"
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
