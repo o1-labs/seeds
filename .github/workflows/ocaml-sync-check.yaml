@@ -40,7 +40,7 @@ jobs:
                 mina daemon \
                 --peer ${{ matrix.seed }}
         env:
-          MINA_TAG: 3.0.3-d800da8-focal-mainnet
+          MINA_TAG: 3.0.4-beta1-f01cf0b-focal-mainnet
       - name: Wait for Daemon to Sync
         id: wait-for-sync
         run: ./scripts/mina-sync-monitor.sh ocaml

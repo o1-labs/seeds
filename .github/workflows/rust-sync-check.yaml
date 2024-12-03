@@ -39,7 +39,7 @@ jobs:
                 node \
                 --peers ${{ matrix.seed }}
         env:
-          MINA_TAG: v0.11.4
+          MINA_TAG: v0.11.5
       - name: Wait for Daemon to Sync
         id: wait-for-sync
         run: ./scripts/mina-sync-monitor.sh rust
