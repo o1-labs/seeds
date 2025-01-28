@@ -52,7 +52,7 @@ jobs:
           echo "${{ matrix.seed }}" > failed-seeds-${{strategy.job-index}}.txt
       - name: Upload failed seeds
         if: ${{ failure() }}
-        uses: actions/upload-artifact@v4.4.0
+        uses: actions/upload-artifact@v4.6.0
         with:
           name: failed-seeds-${{strategy.job-index}}
           path: failed-seeds-${{strategy.job-index}}.txt
