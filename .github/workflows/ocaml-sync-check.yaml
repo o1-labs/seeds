@@ -13,7 +13,7 @@ jobs:
       seeds: ${{ steps.parse-mainnet-seed-list.outputs.seeds }}
     steps:
       - name: 📥 Checkout
-        uses: actions/checkout@v4.1.1
+        uses: actions/checkout@v4.2.2
       - name: Parse Mainnet Seed List
         id: parse-mainnet-seed-list
         run: |
@@ -30,7 +30,7 @@ jobs:
         seed: ${{ fromJson(needs.parse-mainnet-seed-list.outputs.seeds) }}
     steps:
       - name: 📥 Checkout
-        uses: actions/checkout@v4.1.1
+        uses: actions/checkout@v4.2.2
       - name: Start Mina Daemon
         run: |
           echo "Starting Mina Daemon"
@@ -76,7 +76,7 @@ jobs:
       - name: Post to a Slack channel
         id: slack
         if: ${{ success() }}
-        uses: slackapi/slack-github-action@v1.26.0
+        uses: slackapi/slack-github-action@v2.0.0
         with:
           channel-id: "mf-alerts-test"
           payload-file-path: "./payload-slack-content.json"
