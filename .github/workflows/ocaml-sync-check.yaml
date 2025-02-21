@@ -36,11 +36,11 @@ jobs:
           echo "Starting Mina Daemon"
           docker run -d --restart always --name mina \
                 --entrypoint="" \
-                minaprotocol/mina-daemon:${{ env.MINA_TAG }} \
+                gcr.io/o1labs-192920/mina-daemon:${{ env.MINA_TAG }} \
                 mina daemon \
                 --peer ${{ matrix.seed }}
         env:
-          MINA_TAG: 3.0.4-beta1-f01cf0b-focal-mainnet
+          MINA_TAG: 3.0.4-beta1-343543b-bullseye-mainnet
       - name: Wait for Daemon to Sync
         id: wait-for-sync
         run: ./scripts/mina-sync-monitor.sh ocaml
