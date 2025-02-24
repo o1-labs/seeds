@@ -18,7 +18,7 @@ jobs:
         id: parse-mainnet-seed-list
         run: |
           echo "Parsing Mainnet Seed List"
-          seeds=$(cat networks/devnet-webrtc.txt | jq -R -s -c 'split("\n") | map(select(. != ""))')
+          seeds=$(cat networks/mainnet.txt | jq -R -s -c 'split("\n") | map(select(. != ""))')
           echo "seeds=$seeds" >> $GITHUB_OUTPUT
   test-peer:
     needs: parse-mainnet-seed-list
