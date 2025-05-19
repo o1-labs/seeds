@@ -5,7 +5,7 @@ on:
     branches: [main]
 jobs:
   static-code-analysis:
-    runs-on: minafoundation-default-runners
+    runs-on: github-arc-runner
     steps:
       - name: 📥 Checkout
         uses: actions/checkout@v4.2.2
