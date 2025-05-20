@@ -8,7 +8,7 @@ concurrency:
   cancel-in-progress: true
 jobs:
   parse-mainnet-seed-list:
-    runs-on: minafoundation-default-interruptible-runners
+    runs-on: ubuntu-latest
     outputs:
       seeds: ${{ steps.parse-mainnet-seed-list.outputs.seeds }}
     steps:
@@ -22,7 +22,9 @@ jobs:
           echo "seeds=$seeds" >> $GITHUB_OUTPUT
   test-peer:
     needs: parse-mainnet-seed-list
-    runs-on: minafoundation-xlarge-interruptible-runners
+    runs-on: github-arc-runner
+    container:
+      image: gcr.io/o1labs-192920/mina-daemon:3.0.4-beta1-343543b-bullseye-mainnet
     if: needs.parse-mainnet-seed-list.outputs.seeds != '[]' && needs.parse-mainnet-seed-list.outputs.seeds != ''
     continue-on-error: true
     strategy:
@@ -34,13 +36,7 @@ jobs:
       - name: Start Mina Daemon
         run: |
           echo "Starting Mina Daemon"
-          docker run -d --restart always --name mina \
-                --entrypoint="" \
-                gcr.io/o1labs-192920/mina-daemon:${{ env.MINA_TAG }} \
-                mina daemon \
-                --peer ${{ matrix.seed }}
-        env:
-          MINA_TAG: 3.0.4-beta1-343543b-bullseye-mainnet
+          mina daemon --peer ${{ matrix.seed }}
       - name: Wait for Daemon to Sync
         id: wait-for-sync
         run: ./scripts/mina-sync-monitor.sh ocaml
@@ -60,7 +56,7 @@ jobs:
 
   print-failed-seeds:
     needs: test-peer
-    runs-on: minafoundation-default-interruptible-runners
+    runs-on: ubuntu-latest
     continue-on-error: true
     steps:
       - name: Download all artifacts
@@ -73,12 +69,4 @@ jobs:
           jq -n --arg message "Failed to synchronize with Mina Daemon using seed peer:" \
             --argjson seeds "$(cat failed-seeds.txt | jq -R . | jq -s .)" \
             '{text: ($message + "\n\n" + ($seeds | map("• " + .) | join("\n")))}' > payload-slack-content.json
-      - name: Post to a Slack channel
-        id: slack
-        if: ${{ success() }}
-        uses: slackapi/slack-github-action@v2.0.0
-        with:
-          channel-id: "mf-alerts-test"
-          payload-file-path: "./payload-slack-content.json"
-        env:
-          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+          cat payload-slack-content.json
