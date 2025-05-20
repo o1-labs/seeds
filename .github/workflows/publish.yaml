@@ -4,23 +4,17 @@ on:
     branches: [main]
 jobs:
   publishing:
-    runs-on: minafoundation-default-runners
+    runs-on: ubuntu-latest
     steps:
       - name: 📥 Checkout
         uses: actions/checkout@v4.2.2
-      - name: ⚙️ Set environment variables
-        run: |
-          echo "AWS_REGION=$AWS_REGION" >> $GITHUB_ENV
-          echo "DEPLOYMENT_ROLE_NAME=$DEPLOYMENT_ROLE_NAME" >> $GITHUB_ENV
-          echo "AWS_ROLE_DURATION_SECONDS=$AWS_ROLE_DURATION_SECONDS" >> $GITHUB_ENV
-      - name: 🔑 Assume role
-        uses: aws-actions/configure-aws-credentials@v4
+      - name: 🔑 Set up Google Cloud SDK auth
+        uses: google-github-actions/auth@v2
         with:
-          aws-region: ${{ env.AWS_REGION }}
-          role-to-assume: ${{ env.DEPLOYMENT_ROLE_NAME }}
-          role-session-name: ${{ env.DEPLOYMENT_ROLE_NAME }}
-          role-duration-seconds: ${{ env.AWS_ROLE_DURATION_SECONDS }}
+          credentials_json: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
+      - name: 🔑 Set up Google Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
       - name: 📰 Publish network lists
         env:
-          MF_SEED_LISTS_BUCKET_NAME: ${{ secrets.MF_SEED_LISTS_BUCKET_NAME }}
-        run: ./scripts/publish.sh "$MF_SEED_LISTS_BUCKET_NAME"
+          GCS_BUCKET_NAME: ${{ secrets.GCS_BUCKET_NAME }}
+        run: ./scripts/publish.sh "$GCS_BUCKET_NAME"
