@@ -1,4 +1,4 @@
-name: oCaml Seed Synchronization Check
+name: OCaml Seed Synchronization Check
 on:
   workflow_dispatch:
   schedule:

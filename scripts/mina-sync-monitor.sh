@@ -5,7 +5,7 @@ max_attempts=40
 attempt=0
 status="Null"
 sleep_duration=500
-sync_check_command_ocaml="docker exec mina mina client status --json | jq -r .sync_status"
+sync_check_command_ocaml="mina client status --json | jq -r .sync_status"
 sync_check_command_rust="docker exec openmina curl -s http://localhost:3000/status | jq -r .transition_frontier.sync.status"
 
 check_sync_status() {
