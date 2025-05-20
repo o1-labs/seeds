@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# filepath: /Users/sanabriarusso/github/seeds/scripts/mina-sync-monitor-fixed.sh
 set -e
 
 max_attempts=10
@@ -6,7 +7,8 @@ attempt=0
 status="Null"
 sleep_duration=300
 is_daemon_running="mina client status"
-sync_check_command_ocaml="mina client status --json | jq -r .sync_status"
+# Modified command to store raw output first, then parse it safely
+sync_check_command_ocaml="mina client status --json"
 sync_check_command_rust="docker exec openmina curl -s http://localhost:3000/status | jq -r .transition_frontier.sync.status"
 
 check_sync_status() {
@@ -16,7 +18,22 @@ check_sync_status() {
       echo "Mina daemon is not running. Crashing."
       exit 1
     fi
-    status=$(eval "$sync_check_command_ocaml" || echo "Null")
+    
+    # First, capture the raw output
+    raw_output=$(eval "$sync_check_command_ocaml" 2>&1 || echo "")
+    
+    # Check if output exists and can be parsed
+    if [ -z "$raw_output" ]; then
+      echo "Error: Empty response from mina client status"
+      status="Null"
+    elif ! echo "$raw_output" | jq . &>/dev/null; then
+      echo "Error: Invalid JSON from mina client status"
+      echo "Raw output: $raw_output"
+      status="Null"
+    else
+      # If JSON is valid, extract the sync_status
+      status=$(echo "$raw_output" | jq -r '.sync_status // "Null"')
+    fi
   elif [ "$1" == "rust" ]; then
     status=$(eval "$sync_check_command_rust" || echo "Null")
   else
@@ -46,4 +63,5 @@ while [ $attempt -lt $max_attempts ]; do
   sleep $sleep_duration
 done
 
+echo "Failed to sync after $max_attempts attempts."
 exit 1
