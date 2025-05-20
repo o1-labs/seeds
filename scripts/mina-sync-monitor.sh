@@ -10,6 +10,11 @@ sync_check_command_rust="docker exec openmina curl -s http://localhost:3000/stat
 
 check_sync_status() {
   if [ "$1" == "ocaml" ]; then
+    # Check if mina daemon is running
+    if ! pgrep -x "mina" > /dev/null; then
+      echo "Mina daemon is not running. Crashing."
+      exit 1
+    fi
     status=$(eval "$sync_check_command_ocaml" || echo "Null")
   elif [ "$1" == "rust" ]; then
     status=$(eval "$sync_check_command_rust" || echo "Null")
