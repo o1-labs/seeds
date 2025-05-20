@@ -28,6 +28,7 @@ jobs:
     if: needs.parse-mainnet-seed-list.outputs.seeds != '[]' && needs.parse-mainnet-seed-list.outputs.seeds != ''
     continue-on-error: true
     strategy:
+      max-parallel: 3  # Limit to 3 concurrent jobs to reduce infrastructure strain
       matrix:
         seed: ${{ fromJson(needs.parse-mainnet-seed-list.outputs.seeds) }}
     steps:
