@@ -37,7 +37,10 @@ jobs:
       - name: Start Mina Daemon
         run: |
           echo "Starting Mina Daemon"
-          mina daemon --peer ${{ matrix.seed }}
+          mina daemon --peer ${{ matrix.seed }} &
+          sleep 100
+          # Verify daemon is running
+          pgrep -f "mina daemon" || exit 1
       - name: Wait for Daemon to Sync
         id: wait-for-sync
         run: ./scripts/mina-sync-monitor.sh ocaml
