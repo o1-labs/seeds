@@ -1,10 +1,11 @@
 #!/usr/bin/env bash
 set -e
 
-max_attempts=40
+max_attempts=10
 attempt=0
 status="Null"
-sleep_duration=500
+sleep_duration=300
+is_daemon_running="mina client status"
 sync_check_command_ocaml="mina client status --json | jq -r .sync_status"
 sync_check_command_rust="docker exec openmina curl -s http://localhost:3000/status | jq -r .transition_frontier.sync.status"
 
