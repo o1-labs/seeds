@@ -7,7 +7,7 @@ jobs:
   static-code-analysis:
     runs-on: github-arc-runner
     container:
-      image: asia-northeast3-docker.pkg.dev/o1labs-192920/gitops-images/github-actions-runner-ubuntu@sha256:6a057801b698a28307f8135d6fce25d867fe3e8797739845d35ce6e0a33c57c5
+      image: asia-northeast3-docker.pkg.dev/o1labs-192920/gitops-images/github-actions-runner-ubuntu:0.0.1
     steps:
       - name: 📥 Checkout
         uses: actions/checkout@v4.2.2
