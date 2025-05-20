@@ -8,7 +8,7 @@ concurrency:
   cancel-in-progress: true
 jobs:
   parse-mainnet-seed-list:
-    runs-on: minafoundation-default-interruptible-runners
+    runs-on: ubuntu-latest
     outputs:
       seeds: ${{ steps.parse-mainnet-seed-list.outputs.seeds }}
     steps:
@@ -22,7 +22,7 @@ jobs:
           echo "seeds=$seeds" >> $GITHUB_OUTPUT
   test-peer:
     needs: parse-mainnet-seed-list
-    runs-on: minafoundation-default-interruptible-runners
+    runs-on: ubuntu-latest
     if: needs.parse-mainnet-seed-list.outputs.seeds != '[]' && needs.parse-mainnet-seed-list.outputs.seeds != ''
     continue-on-error: true
     strategy:
@@ -35,7 +35,7 @@ jobs:
         run: |
           echo "Starting Mina Daemon"
           docker run --rm -d --name openmina \
-                openmina/openmina:${{ env.MINA_TAG }} \
+                asia-northeast3-docker.pkg.dev/o1labs-192920/gitops-images/openmina:${{ env.MINA_TAG }} \
                 node \
                 --peers ${{ matrix.seed }}
         env:
@@ -59,7 +59,7 @@ jobs:
 
   print-failed-seeds:
     needs: test-peer
-    runs-on: minafoundation-default-interruptible-runners
+    runs-on: ubuntu-latest
     continue-on-error: true
     steps:
       - name: Download all artifacts
@@ -72,12 +72,4 @@ jobs:
           jq -n --arg message "Failed to synchronize with Mina Daemon using seed peer:" \
             --argjson seeds "$(cat failed-seeds.txt | jq -R . | jq -s .)" \
             '{text: ($message + "\n\n" + ($seeds | map("• " + .) | join("\n")))}' > payload-slack-content.json
-      - name: Post to a Slack channel
-        id: slack
-        if: ${{ success() }}
-        uses: slackapi/slack-github-action@v2.0.0
-        with:
-          channel-id: "mf-alerts-testing"
-          payload-file-path: "./payload-slack-content.json"
-        env:
-          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+          cat payload-slack-content.json || exit 0
