@@ -4,7 +4,7 @@ on:
     branches: [main]
 jobs:
   publishing:
-    runs-on: ubuntu-latest  # Using standard GitHub runner instead of custom runner
+    runs-on: ubuntu-latest
     steps:
       - name: 📥 Checkout
         uses: actions/checkout@v4.2.2
