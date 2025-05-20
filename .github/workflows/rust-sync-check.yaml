@@ -42,7 +42,7 @@ jobs:
           MINA_TAG: v0.11.5
       - name: Wait for Daemon to Sync
         id: wait-for-sync
-        run: ./scripts/mina-sync-monitor.sh rust
+        run: ./scripts/mina-sync-monitor.sh
       - name: Record Failing Seed
         id: record-fail
         if: ${{ failure() }}
