@@ -5,9 +5,7 @@ on:
     branches: [main]
 jobs:
   static-code-analysis:
-    runs-on: github-arc-runner
-    container:
-      image: asia-northeast3-docker.pkg.dev/o1labs-192920/gitops-images/github-actions-runner-ubuntu:0.0.1
+    runs-on: o1labs-github-arc-runner-ubuntu
     steps:
       - name: 📥 Checkout
         uses: actions/checkout@v4.2.2
