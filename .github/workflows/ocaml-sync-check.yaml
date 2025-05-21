@@ -22,7 +22,7 @@ jobs:
           echo "seeds=$seeds" >> $GITHUB_OUTPUT
   test-peer:
     needs: parse-mainnet-seed-list
-    runs-on: github-arc-runner
+    runs-on: o1labs-github-arc-runner-mina
     container:
       image: gcr.io/o1labs-192920/mina-daemon:3.0.4-beta1-343543b-bullseye-mainnet
     if: needs.parse-mainnet-seed-list.outputs.seeds != '[]' && needs.parse-mainnet-seed-list.outputs.seeds != ''
