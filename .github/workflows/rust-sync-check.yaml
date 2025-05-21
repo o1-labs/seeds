@@ -22,10 +22,13 @@ jobs:
           echo "seeds=$seeds" >> $GITHUB_OUTPUT
   test-peer:
     needs: parse-mainnet-seed-list
-    runs-on: ubuntu-latest
+    runs-on: o1labs-github-arc-runner-mina
+    container:
+      image: asia-northeast3-docker.pkg.dev/o1labs-192920/gitops-images/openmina:v0.11.5
     if: needs.parse-mainnet-seed-list.outputs.seeds != '[]' && needs.parse-mainnet-seed-list.outputs.seeds != ''
     continue-on-error: true
     strategy:
+      max-parallel: 3
       matrix:
         seed: ${{ fromJson(needs.parse-mainnet-seed-list.outputs.seeds) }}
     steps:
@@ -34,15 +37,10 @@ jobs:
       - name: Start Mina Daemon
         run: |
           echo "Starting Mina Daemon"
-          docker run --rm -d --name openmina \
-                asia-northeast3-docker.pkg.dev/o1labs-192920/gitops-images/openmina:${{ env.MINA_TAG }} \
-                node \
-                --peers ${{ matrix.seed }}
-        env:
-          MINA_TAG: v0.11.5
+          openmina node --peers ${{ matrix.seed }}
       - name: Wait for Daemon to Sync
         id: wait-for-sync
-        run: ./scripts/mina-sync-monitor.sh
+        run: ./scripts/mina-sync-monitor.sh rust
       - name: Record Failing Seed
         id: record-fail
         if: ${{ failure() }}
