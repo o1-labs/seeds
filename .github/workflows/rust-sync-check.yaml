@@ -4,7 +4,7 @@ on:
   schedule:
     - cron: "0 */3 * * *" # Every 3 Hours
 concurrency:
-  group: "rust-sync @ ${{ github.event.pull_request.head.label || github.head_ref || github.ref }}"
+  group: "${{ github.workflow }} @ ${{ github.event.pull_request.head.label || github.head_ref || github.ref }}"
   cancel-in-progress: true
 jobs:
   parse-mainnet-seed-list:
@@ -28,7 +28,7 @@ jobs:
     if: needs.parse-mainnet-seed-list.outputs.seeds != '[]' && needs.parse-mainnet-seed-list.outputs.seeds != ''
     continue-on-error: true
     strategy:
-      max-parallel: 1
+      max-parallel: 2
       matrix:
         seed: ${{ fromJson(needs.parse-mainnet-seed-list.outputs.seeds) }}
     steps:
