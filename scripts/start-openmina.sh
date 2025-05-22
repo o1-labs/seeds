@@ -18,8 +18,13 @@ if ps -p $DAEMON_PID > /dev/null; then
   while [ $ATTEMPT -lt $MAX_ATTEMPTS ]; do
     ATTEMPT=$((ATTEMPT + 1))
     echo "Checking API connectivity (attempt $ATTEMPT/$MAX_ATTEMPTS)..."
-    if curl -s http://localhost:3000/status &> /dev/null; then
+    API_RESPONSE=$(curl -s http://localhost:3000/status)
+    if [ -n "$API_RESPONSE" ] && [ "$API_RESPONSE" != "null" ]; then
       echo "API is responding. Daemon started successfully."
+      echo "API Response: $API_RESPONSE"
+      # Also show sync status specifically
+      SYNC_STATUS=$(echo "$API_RESPONSE" | jq -r '.transition_frontier.sync.status' 2>/dev/null || echo "Could not parse sync status")
+      echo "Current Sync Status: $SYNC_STATUS"
       exit 0
     fi
     sleep 5
