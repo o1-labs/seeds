@@ -4,7 +4,7 @@ on:
   schedule:
     - cron: "0 */3 * * *" # Every 3 Hours
 concurrency:
-  group: "${{ github.workflow }} @ ${{ github.event.pull_request.head.label || github.head_ref || github.ref }}"
+  group: "rust-sync @ ${{ github.event.pull_request.head.label || github.head_ref || github.ref }}"
   cancel-in-progress: true
 jobs:
   parse-mainnet-seed-list:
