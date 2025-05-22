@@ -8,7 +8,7 @@ status="Null"
 sleep_duration=300
 # Modified command to store raw output first, then parse it safely
 sync_check_command_ocaml="mina client status --json"
-sync_check_command_rust="curl -s http://localhost:3000/status | jq -r .transition_frontier.sync.status"
+sync_check_command_rust="timeout 30 curl -s http://localhost:3000/status | jq -r .transition_frontier.sync.status"
 
 check_sync_status() {
   if [ "$1" == "ocaml" ]; then
