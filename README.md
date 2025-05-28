@@ -4,7 +4,7 @@ This repository contains the seed lists published by Mina Foundation.
 
 The lists are accessible for:
 
-- `mainnet`: https://storage.googleapis.com/o1labs-mina-seed-lists/networks/mainnet.txt
+- `mainnet`: https://bootnodes.minaprotocol.com/networks/mainnet.txt
 
 ## How to Submit a New Seed
 
