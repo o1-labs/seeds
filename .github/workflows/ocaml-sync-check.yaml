@@ -2,7 +2,7 @@ name: OCaml Seed Synchronization Check
 on:
   workflow_dispatch:
   schedule:
-    - cron: "0 0 * * 1,4" # At 00:00 on Monday, and Thursday
+    - cron: "30 0 * * 1,4" # Shift by 30 minutes for Monday, Thursday
 concurrency:
   group: "${{ github.workflow }} @ ${{ github.event.pull_request.head.label || github.head_ref || github.ref }}"
   cancel-in-progress: true
@@ -28,7 +28,7 @@ jobs:
     if: needs.parse-mainnet-seed-list.outputs.seeds != '[]' && needs.parse-mainnet-seed-list.outputs.seeds != ''
     continue-on-error: true
     strategy:
-      max-parallel: 3
+      max-parallel: 2
       matrix:
         seed: ${{ fromJson(needs.parse-mainnet-seed-list.outputs.seeds) }}
     steps:
