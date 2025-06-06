@@ -2,7 +2,7 @@
 
 set -e
 
-max_attempts=6
+max_attempts=7
 attempt=0
 status="Null"
 sleep_duration=300
