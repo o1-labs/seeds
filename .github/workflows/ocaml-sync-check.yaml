@@ -74,3 +74,12 @@ jobs:
             --argjson seeds "$(cat failed-seeds.txt | jq -R . | jq -s .)" \
             '{text: ($message + "\n\n" + ($seeds | map("• " + .) | join("\n")))}' > payload-slack-content.json
           cat payload-slack-content.json
+      - name: Post to a Slack channel
+        id: slack
+        if: ${{ success() }}
+        uses: slackapi/slack-github-action@v2.0.0
+        with:
+          channel-id: "n8n-bot-hub"
+          payload-file-path: "./payload-slack-content.json"
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_N8N_JANITOR_TOKEN }}
