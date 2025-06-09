@@ -70,16 +70,15 @@ jobs:
       - name: Echo Failed Seeds
         run: |
           cat failed-seeds-*/failed-seeds-*.txt > failed-seeds.txt || exit 0
-          jq -n --arg message "Failed to synchronize with Mina Daemon using seed peer:" \
+          jq -n --arg message "Failed to synchronize with Mina OCAML Daemon using seed peer:" \
             --argjson seeds "$(cat failed-seeds.txt | jq -R . | jq -s .)" \
-            '{text: ($message + "\n\n" + ($seeds | map("• " + .) | join("\n")))}' > payload-slack-content.json
-          cat payload-slack-content.json
+            '{"channel": "C08ADQMJZJ8", "text": ($message + "\n\n" + ($seeds | map("• " + .) | join("\n")))}' > payload-slack-content.json
+          cat payload-slack-content.json || exit 0
       - name: Post to a Slack channel
         id: slack
         if: ${{ success() }}
-        uses: slackapi/slack-github-action@v2.0.0
+        uses: slackapi/slack-github-action@v2.1.0
         with:
-          channel-id: "n8n-bot-hub"
-          payload-file-path: "./payload-slack-content.json"
-        env:
-          SLACK_BOT_TOKEN: ${{ secrets.SLACK_N8N_JANITOR_TOKEN }}
+          method: chat.postMessage
+          token: ${{ secrets.SLACK_N8N_JANITOR_TOKEN }}
+          payload-file-path: payload-slack-content.json
