@@ -67,7 +67,7 @@ jobs:
       - name: Echo Failed Seeds
         run: |
           cat failed-seeds-*/failed-seeds-*.txt > failed-seeds.txt || exit 0
-          jq -n --arg message "Failed to synchronize with Mina Daemon using seed peer:" \
+          jq -n --arg message "Failed to synchronize with Mina RUST Daemon using seed peer:" \
             --argjson seeds "$(cat failed-seeds.txt | jq -R . | jq -s .)" \
             '{"channel": "C08ADQMJZJ8", "text": ($message + "\n\n" + ($seeds | map("• " + .) | join("\n")))}' > payload-slack-content.json
           cat payload-slack-content.json || exit 0
