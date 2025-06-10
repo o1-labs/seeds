@@ -69,14 +69,16 @@ jobs:
           pattern: "failed-seeds-*" # Use a wildcard to download all artifacts matching the pattern
       - name: Echo Failed Seeds
         run: |
-          cat failed-seeds-*/failed-seeds-*.txt > failed-seeds.txt || exit 0
-          jq -n --arg message "Failed to synchronize with Mina OCAML Daemon using seed peer:" \
-            --argjson seeds "$(cat failed-seeds.txt | jq -R . | jq -s .)" \
-            '{"channel": "C08ADQMJZJ8", "text": ($message + "\n\n" + ($seeds | map("• " + .) | join("\n")))}' > payload-slack-content.json
-          cat payload-slack-content.json || exit 0
+          cat failed-seeds-*/failed-seeds-*.txt > failed-seeds.txt 2>/dev/null || touch failed-seeds.txt
+          if [ -s failed-seeds.txt ]; then
+            jq -n --arg message "Failed to synchronize with Mina OCAML Daemon using seed peer:" \
+              --argjson seeds "$(cat failed-seeds.txt | jq -R . | jq -s .)" \
+              '{"channel": "C08ADQMJZJ8", "text": ($message + "\n\n" + ($seeds | map("• " + .) | join("\n")))}' > payload-slack-content.json
+            cat payload-slack-content.json || exit 0
+          fi
       - name: Post to a Slack channel
         id: slack
-        if: ${{ success() }}
+        if: ${{ success() && hashFiles('payload-slack-content.json') != '' }}
         uses: slackapi/slack-github-action@v2.1.0
         with:
           method: chat.postMessage
