@@ -5,6 +5,7 @@ This repository contains the seed lists published by Mina Foundation.
 The lists are accessible for:
 
 - `mainnet`: https://bootnodes.minaprotocol.com/networks/mainnet.txt
+- `devnet`: https://bootnodes.minaprotocol.com/networks/devnet.txt
 
 ## How to Submit a New Seed
 
