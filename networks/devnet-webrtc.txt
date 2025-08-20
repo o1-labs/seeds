@@ -1,1 +1,3 @@
 /2ajAaG7KBAawsftEdcqnPzedCvBVXYKZc3K5SUPhPbD57oLyp1v/https/openmina-seed-1.gcp.o1test.net/443
+/2az589QvS6i3EJiVKUfVHCkyqf4khGy9PjQF7nSQuveF27wp7xX/https/mina-rust-seed-1.gcp.o1test.net/443
+/2cJEbhytxfdeqdGTrnBikvdqLGxSRJMjDAUP9P92iUnuE3qayFp/https/mina-rust-seed-2.gcp.o1test.net/443
