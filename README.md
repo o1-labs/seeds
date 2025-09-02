@@ -23,3 +23,9 @@ Thank you for considering contributing to the Mina Foundation Seed Lists! Follow
 Thank you for helping to grow the Mina Protocol community!
 
 ---
+
+
+Additionnaly, you can also submit a patch to the
+[OpenMina](https://github.com/o1-labs/openmina) repository to add your peer as a
+default one. You can follow the documentation on the OpenMina website, available
+[here](TODO).
