@@ -24,7 +24,7 @@ jobs:
     needs: parse-mainnet-seed-list
     runs-on: o1labs-github-arc-runner-openmina
     container:
-      image: asia-northeast3-docker.pkg.dev/o1labs-192920/gitops-images/openmina:v0.11.5
+      image: o1labs/mina-rust:v0.17.0
     if: needs.parse-mainnet-seed-list.outputs.seeds != '[]' && needs.parse-mainnet-seed-list.outputs.seeds != ''
     continue-on-error: true
     strategy:
@@ -37,7 +37,7 @@ jobs:
       - name: Start Mina Daemon
         run: |
           echo "Starting Mina Daemon"
-          ./scripts/start-openmina.sh "${{ matrix.seed }}"
+          ./scripts/start-mina-rust.sh "${{ matrix.seed }}"
       - name: Wait for Daemon to Sync
         id: wait-for-sync
         run: ./scripts/mina-sync-monitor.sh rust
