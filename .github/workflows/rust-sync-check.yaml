@@ -37,7 +37,7 @@ jobs:
       - name: Start Mina Daemon
         run: |
           echo "Starting Mina Daemon"
-          ./scripts/start-openmina.sh "${{ matrix.seed }}"
+          ./scripts/start-mina-rust.sh "${{ matrix.seed }}"
       - name: Wait for Daemon to Sync
         id: wait-for-sync
         run: ./scripts/mina-sync-monitor.sh rust
