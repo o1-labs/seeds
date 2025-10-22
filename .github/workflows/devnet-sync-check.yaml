@@ -1,36 +1,36 @@
-name: OCaml Mainnet Seed Synchronization Check
+name: OCaml Devnet Seed Synchronization Check
 on:
   workflow_dispatch:
   schedule:
-    - cron: "30 0 * * 1,4" # Shift by 30 minutes for Monday, Thursday
+    - cron: "30 0 * * 2,5" # Tuesday, Friday at 00:30 UTC
 concurrency:
   group: "${{ github.workflow }} @ ${{ github.event.pull_request.head.label || github.head_ref || github.ref }}"
   cancel-in-progress: true
 jobs:
-  parse-mainnet-seed-list:
+  parse-devnet-seed-list:
     runs-on: ubuntu-latest
     outputs:
-      seeds: ${{ steps.parse-mainnet-seed-list.outputs.seeds }}
+      seeds: ${{ steps.parse-devnet-seed-list.outputs.seeds }}
     steps:
       - name: 📥 Checkout
         uses: actions/checkout@v4.2.2
-      - name: Parse Mainnet Seed List
-        id: parse-mainnet-seed-list
+      - name: Parse Devnet Seed List
+        id: parse-devnet-seed-list
         run: |
-          echo "Parsing Mainnet Seed List"
-          seeds=$(cat networks/mainnet.txt | jq -R -s -c 'split("\n") | map(select(. != ""))')
+          echo "Parsing Devnet Seed List"
+          seeds=$(cat networks/devnet.txt | jq -R -s -c 'split("\n") | map(select(. != ""))')
           echo "seeds=$seeds" >> $GITHUB_OUTPUT
   test-peer:
-    needs: parse-mainnet-seed-list
+    needs: parse-devnet-seed-list
     runs-on: o1labs-github-arc-runner-mina
     container:
-      image: gcr.io/o1labs-192920/mina-daemon:3.2.0-97ad487-bullseye-mainnet
-    if: needs.parse-mainnet-seed-list.outputs.seeds != '[]' && needs.parse-mainnet-seed-list.outputs.seeds != ''
+      image: gcr.io/o1labs-192920/mina-daemon:3.3.0-alpha1-6929a7e-bullseye-devnet
+    if: needs.parse-devnet-seed-list.outputs.seeds != '[]' && needs.parse-devnet-seed-list.outputs.seeds != ''
     continue-on-error: true
     strategy:
       max-parallel: 2
       matrix:
-        seed: ${{ fromJson(needs.parse-mainnet-seed-list.outputs.seeds) }}
+        seed: ${{ fromJson(needs.parse-devnet-seed-list.outputs.seeds) }}
     steps:
       - name: 📥 Checkout
         uses: actions/checkout@v4.2.2
@@ -71,7 +71,7 @@ jobs:
         run: |
           cat failed-seeds-*/failed-seeds-*.txt > failed-seeds.txt 2>/dev/null || touch failed-seeds.txt
           if [ -s failed-seeds.txt ]; then
-            jq -n --arg message "Failed to synchronize with Mina OCAML Daemon (Mainnet) using seed peer:" \
+            jq -n --arg message "Failed to synchronize with Mina OCAML Daemon (Devnet) using seed peer:" \
               --argjson seeds "$(cat failed-seeds.txt | jq -R . | jq -s .)" \
               '{"channel": "C08ADQMJZJ8", "text": ($message + "\n\n" + ($seeds | map("• " + .) | join("\n")))}' > payload-slack-content.json
             cat payload-slack-content.json || exit 0
