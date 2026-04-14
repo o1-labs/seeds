@@ -2,6 +2,14 @@ name: OCaml Devnet Seed Synchronization Check
 on:
   workflow_dispatch:
     inputs:
+      image_registry:
+        description: "Container registry to pull the Mina daemon image from"
+        required: false
+        type: choice
+        default: "gcr.io/o1labs-192920/mina-daemon"
+        options:
+          - "gcr.io/o1labs-192920/mina-daemon"
+          - "europe-west3-docker.pkg.dev/o1labs-192920/euro-docker-repo/mina-daemon"
       image_tag:
         description: "Mina daemon image tag (e.g. 3.4.0-alpha1-22d9374-noble-devnet)"
         required: false
@@ -43,7 +51,7 @@ jobs:
     needs: parse-devnet-seed-list
     runs-on: o1labs-github-arc-runner-mina
     container:
-      image: gcr.io/o1labs-192920/mina-daemon:${{ inputs.image_tag || '3.3.0-alpha1-6929a7e-bullseye-devnet' }}
+      image: ${{ inputs.image_registry || 'gcr.io/o1labs-192920/mina-daemon' }}:${{ inputs.image_tag || '3.3.0-alpha1-6929a7e-bullseye-devnet' }}
     if: needs.parse-devnet-seed-list.outputs.seeds != '[]' && needs.parse-devnet-seed-list.outputs.seeds != ''
     continue-on-error: true
     strategy:
