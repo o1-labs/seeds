@@ -1,13 +1,32 @@
 name: OCaml Devnet Seed Synchronization Check
 on:
   workflow_dispatch:
+    inputs:
+      image_tag:
+        description: "Mina daemon image tag (e.g. 3.4.0-alpha1-22d9374-noble-devnet)"
+        required: false
+        default: "3.3.0-alpha1-6929a7e-bullseye-devnet"
   schedule:
     - cron: "30 0 * * 2,5" # Tuesday, Friday at 00:30 UTC
 concurrency:
   group: "${{ github.workflow }} @ ${{ github.event.pull_request.head.label || github.head_ref || github.ref }}"
   cancel-in-progress: true
 jobs:
+  check-access:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch'
+    steps:
+      - name: Verify o1-labs/eng membership
+        env:
+          GH_TOKEN: ${{ secrets.GENERAL_READ_GITHUB_TOKEN }}
+        run: |
+          if ! gh api orgs/o1-labs/teams/eng/members --jq '.[].login' | grep -qx "${{ github.actor }}"; then
+            echo "::error::Only o1-labs/eng team members can trigger this workflow."
+            exit 1
+          fi
   parse-devnet-seed-list:
+    needs: [check-access]
+    if: always() && (needs.check-access.result == 'success' || needs.check-access.result == 'skipped')
     runs-on: ubuntu-latest
     outputs:
       seeds: ${{ steps.parse-devnet-seed-list.outputs.seeds }}
@@ -24,7 +43,7 @@ jobs:
     needs: parse-devnet-seed-list
     runs-on: o1labs-github-arc-runner-mina
     container:
-      image: gcr.io/o1labs-192920/mina-daemon:3.3.0-alpha1-6929a7e-bullseye-devnet
+      image: gcr.io/o1labs-192920/mina-daemon:${{ inputs.image_tag || '3.3.0-alpha1-6929a7e-bullseye-devnet' }}
     if: needs.parse-devnet-seed-list.outputs.seeds != '[]' && needs.parse-devnet-seed-list.outputs.seeds != ''
     continue-on-error: true
     strategy:
