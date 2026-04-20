@@ -13,7 +13,7 @@ on:
       image_tag:
         description: "Mina daemon image tag (e.g. 3.4.0-alpha1-22d9374-noble-devnet)"
         required: false
-        default: "3.3.0-alpha1-6929a7e-bullseye-devnet"
+        default: "3.4.0-alpha1-22d9374-noble-devnet"
   schedule:
     - cron: "30 0 * * 2,5" # Tuesday, Friday at 00:30 UTC
 concurrency:
@@ -51,7 +51,7 @@ jobs:
     needs: parse-devnet-seed-list
     runs-on: o1labs-github-arc-runner-mina
     container:
-      image: ${{ inputs.image_registry || 'gcr.io/o1labs-192920/mina-daemon' }}:${{ inputs.image_tag || '3.3.0-alpha1-6929a7e-bullseye-devnet' }}
+      image: ${{ inputs.image_registry || 'gcr.io/o1labs-192920/mina-daemon' }}:${{ inputs.image_tag || '3.4.0-alpha1-22d9374-noble-devnet' }}
     if: needs.parse-devnet-seed-list.outputs.seeds != '[]' && needs.parse-devnet-seed-list.outputs.seeds != ''
     continue-on-error: true
     strategy:
