@@ -11,9 +11,9 @@ on:
           - "gcr.io/o1labs-192920/mina-daemon"
           - "europe-west3-docker.pkg.dev/o1labs-192920/euro-docker-repo/mina-daemon"
       image_tag:
-        description: "Mina daemon image tag (e.g. 3.2.0-97ad487-bullseye-mainnet)"
+        description: "Mina daemon image tag (e.g. 3.4.0-beta1-23162b0-bullseye-mainnet)"
         required: false
-        default: "3.2.0-97ad487-bullseye-mainnet"
+        default: "3.4.0-beta1-23162b0-bullseye-mainnet"
   schedule:
     - cron: "30 0 * * 1,4" # Shift by 30 minutes for Monday, Thursday
 concurrency:
