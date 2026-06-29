@@ -22,9 +22,9 @@ concurrency:
 jobs:
   check-access:
     runs-on: ubuntu-latest
-    if: github.event_name == 'workflow_dispatch'
     steps:
       - name: Verify o1-labs/eng membership
+        if: github.event_name == 'workflow_dispatch'
         env:
           GH_TOKEN: ${{ secrets.GENERAL_READ_GITHUB_TOKEN }}
         run: |
