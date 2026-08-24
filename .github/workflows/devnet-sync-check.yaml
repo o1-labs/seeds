@@ -6,14 +6,15 @@ on:
         description: "Container registry to pull the Mina daemon image from"
         required: false
         type: choice
-        default: "gcr.io/o1labs-192920/mina-daemon"
+        default: "minaprotocol/mina-daemon"
         options:
+          - "minaprotocol/mina-daemon"
           - "gcr.io/o1labs-192920/mina-daemon"
           - "europe-west3-docker.pkg.dev/o1labs-192920/euro-docker-repo/mina-daemon"
       image_tag:
-        description: "Mina daemon image tag (e.g. 3.4.0-alpha1-22d9374-noble-devnet)"
+        description: "Mina daemon image tag (e.g. 4.0.0-6965b50-bookworm-devnet)"
         required: false
-        default: "3.4.0-alpha1-22d9374-noble-devnet"
+        default: "4.0.0-6965b50-bookworm-devnet"
   schedule:
     - cron: "30 0 * * 2,5" # Tuesday, Friday at 00:30 UTC
 concurrency:
@@ -51,7 +52,7 @@ jobs:
     needs: parse-devnet-seed-list
     runs-on: o1labs-github-arc-runner-mina
     container:
-      image: ${{ inputs.image_registry || 'gcr.io/o1labs-192920/mina-daemon' }}:${{ inputs.image_tag || '3.4.0-alpha1-22d9374-noble-devnet' }}
+      image: ${{ inputs.image_registry || 'minaprotocol/mina-daemon' }}:${{ inputs.image_tag || '4.0.0-6965b50-bookworm-devnet' }}
     if: needs.parse-devnet-seed-list.outputs.seeds != '[]' && needs.parse-devnet-seed-list.outputs.seeds != ''
     continue-on-error: true
     strategy:
