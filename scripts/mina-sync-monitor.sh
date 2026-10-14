@@ -8,7 +8,6 @@ status="Null"
 sleep_duration=300
 # Modified command to store raw output first, then parse it safely
 sync_check_command_ocaml="mina client status --json"
-sync_check_command_rust="timeout 30 curl -s http://localhost:3000/status | jq -r .transition_frontier.sync.status"
 
 check_sync_status() {
   if [ "$1" == "ocaml" ]; then
@@ -33,8 +32,6 @@ check_sync_status() {
       # If JSON is valid, extract the sync_status
       status=$(echo "$raw_output" | jq -r '.sync_status // "Null"')
     fi
-  elif [ "$1" == "rust" ]; then
-    status=$(eval "$sync_check_command_rust" || echo "Null")
   else
     status="Null"
   fi
@@ -45,10 +42,8 @@ check_sync_status() {
 while [ $attempt -lt $max_attempts ]; do
   if [ "$1" == "ocaml" ]; then
     check_sync_status "ocaml"
-  elif [ "$1" == "rust" ]; then
-    check_sync_status "rust"
   else
-    echo "Invalid container type. Please specify 'ocaml' or 'rust'."
+    echo "Invalid container type. Please specify 'ocaml'."
     exit 1
   fi
 
